@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "3009:3009"
+    volumes:
+      - .:/usr/src/app
+      - ./uploads:/usr/src/app/uploads
+    environment:
+      - NODE_ENV=development
