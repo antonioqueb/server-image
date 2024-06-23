@@ -9,8 +9,9 @@ const storage = multer.diskStorage({
     cb(null, 'uploads/');
   },
   filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + '-' + file.originalname);
+    const nss = req.body.nss;
+    const extension = path.extname(file.originalname);
+    cb(null, `${nss}${extension}`);
   }
 });
 
@@ -19,6 +20,9 @@ const upload = multer({ storage: storage });
 router.post('/', upload.single('image'), (req, res) => {
   if (!req.file) {
     return res.status(400).send({ message: 'Please upload an image' });
+  }
+  if (!req.body.nss) {
+    return res.status(400).send({ message: 'Please provide an NSS' });
   }
   const imageUrl = `http://${req.hostname}:3008/uploads/${req.file.filename}`;
   res.send({
