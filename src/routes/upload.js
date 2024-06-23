@@ -10,6 +10,7 @@ const storage = multer.diskStorage({
     cb(null, 'uploads/');
   },
   filename: function (req, file, cb) {
+    // Move the NSS extraction inside the filename function
     const nss = req.body.nss;
     const extension = path.extname(file.originalname);
     if (nss) {
@@ -22,6 +23,9 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+// Middleware to handle form-data before multer processes the file
+router.use(express.urlencoded({ extended: true }));
+
 router.post('/', upload.single('image'), (req, res) => {
   if (!req.file) {
     return res.status(400).send({ message: 'Please upload an image' });
@@ -29,7 +33,7 @@ router.post('/', upload.single('image'), (req, res) => {
   if (!req.body.nss) {
     return res.status(400).send({ message: 'Please provide an NSS' });
   }
-  
+
   const nss = req.body.nss;
   const extension = path.extname(req.file.originalname);
   const filename = `${nss}${extension}`;
