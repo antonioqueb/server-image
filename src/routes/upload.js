@@ -6,10 +6,12 @@ const fs = require('fs');
 const router = express.Router();
 
 router.use(express.urlencoded({ extended: true })); // Middleware para manejar datos urlencoded
+router.use(express.json()); // Middleware para manejar JSON
 
 // Middleware para verificar que el NSS está presente
 const verifyNSS = (req, res, next) => {
   console.log('Verificando NSS:', req.body.nss); // Agregado para depuración
+  console.log('Request body:', req.body); // Agregado para depuración
   if (!req.body.nss) {
     return res.status(400).send({ message: 'Please provide an NSS' });
   }
