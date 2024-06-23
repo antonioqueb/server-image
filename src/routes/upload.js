@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const sharp = require('sharp');
 
 const router = express.Router();
 
@@ -15,7 +16,7 @@ const storage = multer.diskStorage({
   },
   filename: function (req, file, cb) {
     const nss = req.body.nss;
-    const extension = path.extname(file.originalname);
+    const extension = '.webp';
     cb(null, `${nss}${extension}`);
   }
 });
@@ -33,24 +34,25 @@ const verifyNSS = (req, res, next) => {
 };
 
 // Ruta para la subida de archivos con verificación de NSS
-router.post('/', upload.single('image'), verifyNSS, (req, res) => {
+router.post('/', upload.single('image'), verifyNSS, async (req, res) => {
   console.log('Archivo recibido:', req.file); // Agregado para depuración
   if (!req.file) {
     return res.status(400).send({ message: 'Please upload an image' });
   }
 
   const nss = req.body.nss;
-  const extension = path.extname(req.file.originalname);
-  const filename = `${nss}${extension}`;
+  const filename = `${nss}.webp`;
   const filePath = path.join(__dirname, '../../uploads', filename);
 
-  // Verificar si el archivo ya existe y reemplazarlo si es necesario
-  if (fs.existsSync(filePath)) {
-    fs.unlinkSync(filePath);
+  try {
+    await sharp(req.file.path)
+      .webp({ quality: 80 })
+      .toFile(filePath);
+    fs.unlinkSync(req.file.path); // Elimina el archivo original
+  } catch (error) {
+    console.error('Error al convertir la imagen:', error);
+    return res.status(500).send({ message: 'Error al procesar la imagen' });
   }
-
-  // Mover el archivo subido al destino final
-  fs.renameSync(req.file.path, filePath);
 
   const imageUrl = `http://${req.hostname}:3008/uploads/${filename}`;
   res.send({

@@ -12,6 +12,10 @@ COPY package*.json ./
 # Install dependencies.
 RUN npm install
 
+# Install sharp dependencies
+RUN apt-get update && apt-get install -y \
+  libvips-dev
+
 # Copy the local code to the container image.
 COPY . .
 
