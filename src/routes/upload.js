@@ -9,6 +9,7 @@ router.use(express.urlencoded({ extended: true })); // Middleware para manejar d
 
 // Middleware para verificar que el NSS está presente
 const verifyNSS = (req, res, next) => {
+  console.log('Verificando NSS:', req.body.nss); // Agregado para depuración
   if (!req.body.nss) {
     return res.status(400).send({ message: 'Please provide an NSS' });
   }
@@ -30,6 +31,7 @@ const upload = multer({ storage: storage });
 
 // Ruta para la subida de archivos con verificación de NSS
 router.post('/', verifyNSS, upload.single('image'), (req, res) => {
+  console.log('Archivo recibido:', req.file); // Agregado para depuración
   if (!req.file) {
     return res.status(400).send({ message: 'Please upload an image' });
   }
