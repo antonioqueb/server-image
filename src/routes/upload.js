@@ -5,8 +5,16 @@ const fs = require('fs');
 
 const router = express.Router();
 
-// Middleware para procesar el cuerpo antes de multer
-router.use(express.urlencoded({ extended: true }));
+router.use(express.urlencoded({ extended: true })); // Middleware para manejar datos urlencoded
+router.use(express.json()); // Middleware para manejar JSON
+
+// Middleware para verificar que el NSS está presente
+const verifyNSS = (req, res, next) => {
+  if (!req.body.nss) {
+    return res.status(400).send({ message: 'Please provide an NSS' });
+  }
+  next();
+};
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -15,23 +23,14 @@ const storage = multer.diskStorage({
   filename: function (req, file, cb) {
     const nss = req.body.nss;
     const extension = path.extname(file.originalname);
-    if (nss) {
-      cb(null, `${nss}${extension}`);
-    } else {
-      cb(new Error('NSS is required'));
-    }
+    cb(null, `${nss}${extension}`);
   }
 });
 
 const upload = multer({ storage: storage });
 
-router.post('/', (req, res, next) => {
-  // Verificar que el NSS está presente antes de procesar la imagen
-  if (!req.body.nss) {
-    return res.status(400).send({ message: 'Please provide an NSS' });
-  }
-  next();
-}, upload.single('image'), (req, res) => {
+// Ruta para la subida de archivos con verificación de NSS
+router.post('/', verifyNSS, upload.single('image'), (req, res) => {
   if (!req.file) {
     return res.status(400).send({ message: 'Please upload an image' });
   }
