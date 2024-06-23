@@ -5,12 +5,14 @@ const fs = require('fs');
 
 const router = express.Router();
 
+// Middleware para procesar el cuerpo antes de multer
+router.use(express.urlencoded({ extended: true }));
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/');
   },
   filename: function (req, file, cb) {
-    // Move the NSS extraction inside the filename function
     const nss = req.body.nss;
     const extension = path.extname(file.originalname);
     if (nss) {
@@ -22,9 +24,6 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
-
-// Middleware to handle form-data before multer processes the file
-router.use(express.urlencoded({ extended: true }));
 
 router.post('/', upload.single('image'), (req, res) => {
   if (!req.file) {
