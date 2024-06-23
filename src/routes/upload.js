@@ -11,7 +11,11 @@ const storage = multer.diskStorage({
   filename: function (req, file, cb) {
     const nss = req.body.nss;
     const extension = path.extname(file.originalname);
-    cb(null, `${nss}${extension}`);
+    if (nss) {
+      cb(null, `${nss}${extension}`);
+    } else {
+      cb(new Error('NSS is required'));
+    }
   }
 });
 
