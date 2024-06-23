@@ -25,12 +25,15 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-router.post('/', upload.single('image'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).send({ message: 'Please upload an image' });
-  }
+router.post('/', (req, res, next) => {
+  // Verificar que el NSS está presente antes de procesar la imagen
   if (!req.body.nss) {
     return res.status(400).send({ message: 'Please provide an NSS' });
+  }
+  next();
+}, upload.single('image'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).send({ message: 'Please upload an image' });
   }
 
   const nss = req.body.nss;
