@@ -20,7 +20,7 @@ router.post('/', upload.single('image'), (req, res) => {
   if (!req.file) {
     return res.status(400).send({ message: 'Please upload an image' });
   }
-  const imageUrl = `http://${req.hostname}:${req.socket.localPort}/uploads/${req.file.filename}`;
+  const imageUrl = `http://${req.hostname}:3008/uploads/${req.file.filename}`;
   res.send({
     imageUrl: imageUrl,
     filename: req.file.filename
