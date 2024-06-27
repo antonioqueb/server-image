@@ -12,3 +12,4 @@ app.use('/upload', uploadRouter);
 app.listen(port, () => {
   console.log(`Server is running at http://149.50.128.198:${port}`);
 });
+// Path: src/routes/upload.js

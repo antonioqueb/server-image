@@ -51,7 +51,7 @@ router.post('/', upload.single('image'), verifyNSS, async (req, res) => {
     return res.status(500).send({ message: 'Error al procesar la imagen' });
   }
 
-  const imageUrl = `http://cdn.historiallaboral/uploads/${filename}`;
+  const imageUrl = `https://cdn.historiallaboral/uploads/${filename}`;
   res.send({
     imageUrl: imageUrl,
     filename: filename
