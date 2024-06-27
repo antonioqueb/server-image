@@ -1,11 +1,9 @@
-version: '3.8'
-
 services:
   image-uploader:
     build: .
     container_name: image_uploader_service
     ports:
-      - "3004:3009"  # Cambiar 3009 por 3004
+      - "3004:3009"
     volumes:
       - image_uploads_data:/usr/src/app/uploads
     environment:
@@ -15,7 +13,7 @@ services:
     image: nginx:latest
     container_name: image_uploader_nginx
     ports:
-      - "3003:80"  # Cambiar 3008 por 3003
+      - "3003:80"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - image_uploads_data:/usr/share/nginx/html/uploads
